@@ -1,0 +1,20 @@
+
+#include <stdio.h> 
+#include <stdafx.h> 
+int main(void) 
+{int grade; 
+unsigned int i; 
+int a; 
+i=0; 
+do{ 
+printf("%s","Enter your grade:"); 
+scanf_s("%d",&grade); 
+}while((grade<0)||(grade>10)); 
+do{i=i+1; 
+a=i*i; 
+if(a==grade){ 
+printf("%s","Chislo kvadrat");} 
+} 
+while(i<=10); 
+return 0; 
+}
