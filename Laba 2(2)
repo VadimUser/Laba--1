@@ -1,0 +1,46 @@
+//Удалить из массива элементы таким образом, чтобы оставшиеся значения образовывали неубывающую последовательность.
+#include <stdio.h>
+#include <string.h>
+#define N 10
+int a[N],b[N],i,k, j; 
+int t=10;
+int print() //ф-ция заполнения массива значениями
+    {
+for (i=0; i<N-1; i++)
+{
+printf ("a[%d]= ", i+1); 
+scanf ("%d", &a[i]);
+memcpy(b, a, sizeof(a));//копирование массива из а в b
+}
+return 0;
+     }
+int vivod()//ф-ция вывода на экран значений массива
+{
+	printf("%s", "YOUR_MASSIVE_IS: ");
+	for (i = 0; b[i] != '\0'; i++)
+	{
+		printf("%d ", b[i]);  
+	}
+	return 0;
+}
+int main() 
+{ 
+	print();
+	vivod();
+k = 0; 
+printf("\n%s","Your_sorted_massive: ");    
+for (i = 1; i < t; i++) 
+if (b[i] <= b[k])
+{ 
+ for(j=i; j<t-1; j++)
+b[j]=b[j+1];
+t--;
+i--;
+}
+else                     
+k = i; 
+for(i=0; i<t; i++)
+ printf("%d ", b[i]);  
+    getchar(); getchar(); 
+return 0;
+}
