@@ -1,0 +1,220 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define MAX_MONTH 60
+typedef struct
+{
+	char name[30];
+	int salary[MAX_MONTH];
+}TPerson;
+
+int get_month(char *date)
+{
+	char*month, *year;
+	int imonth, iyear;
+	month = strchr(date, '.');
+	sscanf(month + 1, "%d", &imonth);
+
+	year = strchr(month + 1, '.');
+	sscanf(year + 1, "%d", &iyear);
+	return (iyear - 1980) * 12 + imonth;
+}
+int main()
+{
+	FILE *f;
+	char s[200];
+	int i,l;
+	int sum = 0, k=0,j=0,p=0,sum1=0,Sum=0,K=0,L=0,J=0;
+	float KJ = 0, gini1, gini2, gini3,high=0,mid=0,low=0;
+	float cum = 0.01;
+	int maxk = 0, mink = 0;
+	int * res, *cortres;
+	int summa = 0;
+	int decilcoef = 0;
+	int mediana = 0;
+	char name[30], date[20];
+	int salary;
+	char * semicolon1, *semicolon2;
+
+	TPerson * persons = NULL;
+	int personCount = 0;
+	int personFound;
+	int maxMonth = 0, minMonth = 999999;
+	int month;
+	int sumpers = 0;
+	f = fopen("salary.csv", "rt");
+	if (f != NULL) { printf("File open\n");}
+	else { printf("File is not open\n"); }
+	while (!feof(f))
+	{
+		fgets(s, 200, f);
+		semicolon1 = strchr(s, ';');
+		semicolon2 = strchr(semicolon1 + 1, ';');
+		strncpy(date, semicolon1 + 1, semicolon2 - semicolon1);
+		date[semicolon2 - semicolon1] = 0;
+		month = get_month(date);
+		if (month> maxMonth)
+			maxMonth = month;
+		if (month<minMonth)
+			minMonth = month;
+	}
+	fseek(f, 0, SEEK_SET);
+	while (!feof(f))
+	{
+		fgets(s, 200, f);
+		semicolon1 = strchr(s, ';');
+		strncpy(name, s, semicolon1 - s);
+		name[semicolon1 - s] = 0;
+		semicolon2 = strchr(semicolon1 + 1, ';');
+		strncpy(date, semicolon1 + 1, semicolon2 - semicolon1);
+		date[semicolon2 - semicolon1] = 0;
+		sscanf(semicolon2 + 1, "%d", &salary);
+		personFound = 0;
+		for (i = 0; i<personCount; i++)
+			if (strcmp(name, persons[i].name) == 0)
+			{
+				persons[i].salary[get_month(date) - minMonth] += salary;
+				personFound = 1;
+				break;
+			}
+		if (!personFound) 
+		{
+			persons = (TPerson*)realloc(persons, (personCount + 1) * sizeof(TPerson));
+			memset(persons[personCount].salary, 0, sizeof(persons[personCount].salary));
+			persons[personCount].salary[get_month(date) - minMonth] = salary;
+			strcpy(persons[personCount].name, name);
+			personCount++;
+			sumpers = personCount;
+		}
+		printf("%s", s);
+	}
+//counting of sum salaries of people 1.
+	res = (int*)malloc(sumpers * sizeof(int));
+	cortres = (int*)malloc(sumpers * sizeof(int));
+	for (j = 0; j<personCount; j++)
+	{
+		sum = 0;
+		for (k = 0; k< MAX_MONTH; k++)
+		{
+			sum += persons[j].salary[k];
+		}
+		cortres[j] = sum;
+		summa = sum / MAX_MONTH;
+		res[j] = summa;
+		printf("%d ;", res[j]);
+	}
+
+//histogramma paint
+	printf("\nhistogramma of avarage income\n");
+	k = 0; j = 0;
+	for (i = 0; i<personCount; i++)
+	{
+		k = res[i];
+		j = k / 10;
+		printf("%d ", res[i]);
+		for (l = 0; l < j; l++)
+		{
+		printf("*");
+		}
+		printf("%s \n", persons[i].name);
+	}
+//corting
+	printf("Total income \n", res[i]);
+	k = 0;
+	l = 0;
+	for (i = 0; i < personCount; i++)
+		for (j = i + 1; j < personCount; j++)
+		{
+			if (cortres[i] < cortres[j])
+			{
+				k = cortres[i];
+				cortres[i] = cortres[j];
+				cortres[j] = k;
+				l++;
+			}
+		}
+	for (i = 0; i < personCount; i++)
+	{
+		printf("%d \n", cortres[i]);
+	}
+//corting 2
+	printf("Average income \n", res[i]);
+	k = 0;
+	l = 0;
+	for (i = 0; i < personCount; i++)
+		for (j = i + 1; j < personCount; j++)
+		{
+			if (res[i] < res[j])
+			{
+				k = res[i];
+				res[i] = res[j];
+				res[j] = k;
+				l++;
+			}
+		}
+	for (i = 0; i < personCount; i++)
+	{
+		printf("%d \n", res[i]);
+	}
+//Koefficient Jini
+	l = 0; k = 0; j = 0;
+	for (i = 0; i < personCount; i++)
+	{
+		sum1 += cortres[i];
+	}
+	Sum = sum1;
+	sum1 = cortres[0] / 10;
+	sum = cortres[0]/2;
+	for (i = 0; i < personCount; i++)
+	{
+		if (cortres[i] < sum1)
+		{
+			l++;
+		}
+		if (cortres[i] > sum1 && cortres[i] < sum)
+		{
+			k++;
+		}
+		if (cortres[i] > sum) {
+			j++;
+		}
+	}
+	printf("Max = %d\n",j);
+	printf("Medium = %d\n", k);
+	printf("Min = %d\n", l);
+	for (i = 0; i < j; i++)
+	{
+		L += cortres[i];
+	}
+	for (i = 0; i < k; i++)
+	{
+		K += cortres[i+j];
+	}
+	for (i = 0; i < l; i++)
+	{
+		J += cortres[i+k+j];
+	}
+	gini1 = L;
+	gini2 = K;
+	gini3 = J;
+	gini1 = gini1 / Sum;
+	gini2 = gini2 / Sum;
+	gini3 = gini3 / Sum;
+	high = (float)j / personCount;
+	mid = (float)k / personCount;
+	low = (float)l / personCount;
+	KJ = 1 - 2*(gini1*high + (gini1 + gini2)*mid + low) + (gini1*high + gini2*mid + gini3*low);
+	printf("Koefficient Jini = %f\n", KJ);
+//decilcoef
+	k = ((personCount / 2) / 10);
+	mink = res[((personCount / 2) / 10)];
+	maxk = res[personCount - k];
+	decilcoef = mink / maxk;
+	printf("Decilcoeficient %d = min%d / max%d \n", decilcoef, mink, maxk);
+//mediana
+	mediana = res[personCount / 2];
+	printf("Mediana = %d\n", mediana);
+	fclose(f);
+	getchar(); getchar();
+	return;
+}
