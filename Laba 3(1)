@@ -1,0 +1,57 @@
+//Отсортировать массив по убыванию элементов первого столбца.
+#include <stdio.h>
+#include <stdlib.h>
+#define N 3
+#define M 3
+void main()
+{
+
+ int A[N][M],i,j,k,l,min;
+  FILE *fp,*df;
+  fp=fopen("input.txt", "r");
+    if (fp == NULL) {
+        printf("Error opening file %s", fp);
+        getchar();
+		exit(0);}
+  fp=fopen("input.txt", "r");
+  df = fopen("output.txt", "w");
+    if (df == NULL) {
+        printf("Error opening file %s", df);
+        getchar();
+	}
+  for (i=0;i<N;i++)
+{
+  for (j=0;j<M;j++)
+  fscanf (fp,"%d ",&A[i][j]);
+}
+
+  for (i=0;i<=N-1;i++)
+ {
+  for (j=0;j<=M-1;j++)
+  printf ("%2d", A[i][j]);
+  printf ("\n");
+  k = N-1;
+    while (k > 0) {
+        l = 0;
+        for (i=1; i<=k; i++)
+            if (A[i][0] < A[l][0])
+                l = i;
+        for (j=0; j<M; j++) {
+            min = A[l][j];
+            A[l][j] = A[k][j];
+            A[k][j] = min;
+        }
+        k -= 1;
+    }   
+
+    for (i = 0; i < N; i++) 
+	{
+        for (j = 0; j < M; j++) {
+            fprintf(df, "%2d ", A[i][j]);
+        }
+        fprintf(df, "\n");
+	}
+ }
+ fclose(fp);
+ fclose(df);
+}
