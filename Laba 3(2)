@@ -1,0 +1,131 @@
+//Считать массив значений (размер доски неизвестен заранее), в котором отмечена позиция ферзя. Отметить в массиве все клетки, которые бьёт ферзь
+#define _CRT_SECURE_NO_WARNINGS 
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+	int **a;  // указатель на указатель на строку элементов
+	int i, j,k,l,c,s,r,x,y,z,value;
+	FILE *f,*df;
+	int colCount;
+	int rowCount ;
+	char values [72];
+	char sym='\n';
+    char esym=-1;
+	
+	f = fopen("input.txt", "r");
+	if (f == NULL) {
+        printf("Error opening file %s", f);
+        getchar();
+		exit(0);}
+  df = fopen("output.txt", "w");
+
+	fscanf(f, "%d %d\n", &colCount, &rowCount);
+	printf("%d", colCount);
+	printf("%d\n", rowCount);
+	// Выделение памяти под указатели на строки
+	a = (int**)malloc(rowCount * sizeof(int*));
+	for (i = 0; i<rowCount; i++)  
+	{
+		
+		a[i] = (int*)malloc(colCount * sizeof(int));
+		for (j = 0; j<colCount; j++) 
+		{
+			fscanf(f, "%d", &a[i][j]);
+			if (a[i][j]== 0){
+		x= i; 
+        y= j;
+		}
+			values[i * colCount + j] = a[i][j]; 
+		}	
+	}
+	fprintf(df,"Your field\n");
+	for ( i = 0; i <rowCount; i++)
+	{
+		for ( j = 0; j <colCount; j++)
+		{
+			printf("%d ", a[i][j]);
+			fprintf(df, "%d ", a[i][j]);
+		}
+		printf("\n");
+		fprintf(df, "\n");
+	}
+	fprintf(df,"x=%d\ny=%d\n\n",x,y);
+	fprintf(df,"Your converted field\n");
+
+	for (r=0;r<rowCount;r++){
+values[x * (rowCount+1) + r]='2';
+}
+for (z=0;z<rowCount*rowCount+1;z+=(rowCount+1)){
+	values[ y + z]='2';
+}
+//цикл крест накрест напрвление(+1;-1)
+i=0;
+while(i!=(colCount-1-x)*(rowCount+2)){
+	i+=(rowCount+2);
+values[(x * (rowCount+1)  + y) + i]='2';
+
+
+}
+//цикл крест накрест направление(-1;+1)
+j=0;
+while(j!=((colCount-(colCount-y))*(rowCount+2))){
+	j+=(rowCount+2);
+values[(x * (rowCount+1) + y ) -j]='2';
+}
+//цикл крест накрест напрвление(-1;-1)
+i=0;
+while(i!=(colCount-x)*rowCount){
+	i+=colCount;
+	values[(x * (rowCount+1)  + y) +i]='2';//
+}
+//цикл креcт накрест направление (+1;+1)
+j=0;
+while(j!=(colCount-x)*rowCount){
+	j+=rowCount;
+	values[(x * (rowCount+1)  + y) - j]='2';
+}
+// расставление ферзя
+for (s=0;s<rowCount;s++){
+	for (c=0;c<rowCount;c++){
+	putchar(values[s*(rowCount+1)+c]);
+}
+printf("\n");
+}
+df=fopen("output.txt", "wt");
+printf ("opening file: ");
+   // Проверка открытия файла
+   if (df == NULL)
+   {
+	   printf ("Error\n"); 
+	   return -1;
+   }
+   else 
+   { printf ("Good\n");}
+
+   printf ("recording: ");
+   // Запись символа в файл
+  for (s=0;s<rowCount;s++){
+	for (c=0;c<rowCount;c++){
+	esym=fputc(values[s*(rowCount+1)+c],df);
+}
+	fputc(sym,df);
+  }
+
+   // Проверка записи
+   if (esym == EOF)
+      printf ("Error recording \n");
+   else 
+      printf ("Good \n");
+
+   // Закрываем файл
+   printf ("closing file: ");
+   if ( fclose (df) == EOF) {
+	   printf ("Error\n");}
+
+   else printf (" Good\n");
+  
+	fclose(f);	
+	fclose(df);
+	free(a);
+}
