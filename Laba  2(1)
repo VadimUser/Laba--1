@@ -5,7 +5,7 @@ char str[N]; //объявление массива(символов) как гл
     int i,count,flag;
 int mass()
 {
-	gets(str); катя даров
+	gets(str); 
 	return 0;
 }
 int screen()
