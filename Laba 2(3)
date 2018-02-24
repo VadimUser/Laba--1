@@ -16,7 +16,7 @@ for (i=0; i<N; i++)
 		scanf("%d", &a[i][j]);
 }
 }
-return 0; жидан даров
+return 0; 
      }
 int vivod(void)//ф-ция вывода на экран значений массива
 {
